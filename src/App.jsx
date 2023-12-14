@@ -5,10 +5,23 @@ import './App.css'
 import { getTokenFromXero } from './actions/zero';
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
+  const [fetchData, setFetchData] = useState(true);
+  const [code, setCode] = useState(null);
+  const getToken = async () => {
+    const url = new URL(location.href);
+    const code = url.searchParams.get("code");
+    console.log(`code: `, code);
+    if (!code) {
+      await getTokenFromXero();
+      setFetchData(false);
+    } else {
+      setCode(code);
+    }
+  };
   useEffect(() => {
-    getTokenFromXero();
-  }, []);
+    getToken();
+  }, [fetchData]);
 
   return (
     <>
@@ -22,9 +35,9 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        {/* <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
-        </button>
+        </button> */}
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
@@ -35,6 +48,11 @@ function App() {
       <p className="read-the-docs">
         Hello mahdi
       </p>
+      {code && (
+        <button onClick={() => getTokenFromXero()}>
+          Get code
+        </button>
+      )}
     </>
   )
 }
